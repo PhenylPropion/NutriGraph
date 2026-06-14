@@ -17,9 +17,15 @@
       ]
     },
     {
-      "source": "/data.json",
+      "source": "/(data.json|stats.json)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/enhance.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     },
     {

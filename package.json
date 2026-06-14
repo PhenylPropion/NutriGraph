@@ -2,7 +2,7 @@
   "name": "food-composition-dashboard",
   "version": "1.0.0",
   "private": true,
-  "description": "日本食品標準成分表2020年版（八訂）の全食品・全栄養素をインタラクティブに比較するダッシュボード（静的サイト・ビルド不要）",
+  "description": "日本食品標準成分表2023年版（八訂）の全食品・全栄養素をインタラクティブに比較するダッシュボード（静的サイト・ビルド不要）",
   "type": "module",
   "scripts": {
     "dev": "npx --yes serve@latest .",

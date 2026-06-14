@@ -30,12 +30,30 @@ for (const g of GROUPS) {
     let vals = inG.map(f => f.v[c.key]).filter(v => v != null).sort((a, b) => a - b);
     const t = Math.floor(vals.length * 0.05);
     if (t > 0) vals = vals.slice(t, vals.length - t);
-    groupStat[g][c.key] = vals.length ? { q3: quantile(vals, .75), med: quantile(vals, .5), max: vals[vals.length - 1] } : null;
+    groupStat[g][c.key] = vals.length ? {
+      min: vals[0], q1: quantile(vals, .25), med: quantile(vals, .5), q3: quantile(vals, .75),
+      max: vals[vals.length - 1], mean: vals.reduce((a, b) => a + b, 0) / vals.length,
+    } : null;
   }
 }
 
+// ---- グラフ用プレースホルダ出力（描画はブラウザ側の /enhance.js が行う） ----
+const gid = g => String(GROUPS.indexOf(g) + 1).padStart(2, '0');
+// 食品群の分布（箱ひげ）にこの食品の値を重ねるミニグラフ
+function gbox(v, key, g) {
+  if (v == null) return '<span class="boxg-na">—</span>';
+  return `<span class="g-box" data-k="${key}" data-g="${gid(g)}" data-v="${v}"></span>`;
+}
+// 単純な割合バー（最大値=満タン）。max は同じ列・表内の最大値
+function gbar(v, max, color = '#2f7d6e') {
+  if (v == null || !(max > 0)) return '';
+  return `<span class="g-bar" data-v="${v}" data-max="${max}" data-c="${color}"></span>`;
+}
+const BOXLEGEND = `<p class="boxlegend">グラフの見方：棒＝この食品の値（色は群内での位置＝<span style="color:#c2ccd2">■</span>少ない〜<span style="color:#2f7d6e">■</span>多い・<span style="color:#d64541">■</span>突出）、縦線＝群全体の<span style="color:#3b82c4">Q1</span>/<span style="color:#8a5fb0">Q3</span>/<span style="color:#5b6670">平均</span>、<span style="color:#e0762e">●</span>中央値（同じ食品群・上下5%除外）。グラフはお使いのブラウザで描画されます。</p>`;
+
 const KEY = { ENERC_KCAL: 'エネルギー', PROT: 'たんぱく質', FAT: '脂質', CHOCDF: '炭水化物', FIB: '食物繊維総量', NACL_EQ: '食塩相当量' };
 const HEADKEYS = ['ENERC_KCAL', 'PROT', 'FAT', 'CHOCDF', 'FIB', 'NACL_EQ'];
+const CATCOLORS = { '基本': '#2f7d6e', 'たんぱく質': '#c8623c', '脂質': '#d8a23a', '炭水化物': '#6a8caf', '無機質': '#7a5ea8', 'ビタミン': '#3f9b86' };
 
 function page({ title, desc, canonical, body, jsonld, breadcrumb }) {
   const ld = [];
@@ -65,6 +83,7 @@ function page({ title, desc, canonical, body, jsonld, breadcrumb }) {
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%232f7d6e'/%3E%3Crect x='22' y='52' width='13' height='26' fill='%23fff'/%3E%3Crect x='43' y='34' width='13' height='44' fill='%23fff'/%3E%3Crect x='64' y='22' width='13' height='56' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/styles.css">
+<script defer src="/enhance.js"></script>
 ${ld.length ? `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': ld })}</script>` : ''}
 </head>
 <body>
@@ -100,9 +119,9 @@ for (const f of FOODS) {
   // 全成分テーブル（カテゴリ別）
   let rows = '';
   for (const cat of CATS) {
-    rows += `<tr class="catrow"><th colspan="2">${esc(cat)}</th></tr>`;
+    rows += `<tr class="catrow"><th colspan="3">${esc(cat)}</th></tr>`;
     for (const c of COLS.filter(x => x.cat === cat)) {
-      rows += `<tr><td>${esc(c.label)}</td><td class="num">${fmt(f.v[c.key])} ${esc(c.unit)}</td></tr>`;
+      rows += `<tr><td>${esc(c.label)}</td><td class="num">${fmt(f.v[c.key])} ${esc(c.unit)}</td><td class="gcell">${gbox(f.v[c.key], c.key, f.g)}</td></tr>`;
     }
   }
   const siblings = FOODS.filter(x => x.g === f.g && x.no !== f.no).slice(0, 16)
@@ -113,7 +132,8 @@ for (const f of FOODS) {
 <p class="lead">${esc(name)}（食品群：${esc(f.g)}／食品番号 ${f.no}）の栄養成分です。${head ? esc(head) + '。' : ''}日本食品標準成分表2020年版（八訂）にもとづく全53項目の数値を掲載しています。</p>
 ${rich.length ? `<h2>${esc(name)}に豊富な栄養素</h2><p>同じ「${esc(f.g)}」の中で比較すると、次の栄養素が上位（第3四分位以上）です。クリックでランキングを表示します。</p><p>${richPills}</p>` : ''}
 <h2>栄養成分表（全53項目）</h2>
-<table class="data"><thead><tr><th>栄養素</th><th class="num">含有量（100gあたり）</th></tr></thead><tbody>${rows}</tbody></table>
+${BOXLEGEND}
+<table class="data"><thead><tr><th>栄養素</th><th class="num">含有量（100gあたり）</th><th>${esc(f.g)}の中での位置</th></tr></thead><tbody>${rows}</tbody></table>
 <a class="toapp" href="/">▶ ほかの食品とグラフで比較する（NutriGraph）</a>
 <h2>同じ食品群（${esc(f.g)}）の食品</h2>
 <p>${siblings} … <a href="/groups/${groupId(f.g)}">${esc(f.g)}の一覧をすべて見る</a></p>`;
@@ -132,16 +152,19 @@ for (const c of COLS) {
   const withV = FOODS.filter(f => f.v[c.key] != null);
   const top = [...withV].sort((a, b) => b.v[c.key] - a.v[c.key]).slice(0, 50);
   const low = [...withV].filter(f => f.v[c.key] > 0).sort((a, b) => a.v[c.key] - b.v[c.key]).slice(0, 20);
-  const tr = arr => arr.map((f, i) => `<tr><td class="num">${i + 1}</td><td><a href="/foods/${f.no}">${esc(dispName(f.n))}</a></td><td>${esc(f.g)}</td><td class="num">${fmt(f.v[c.key])} ${esc(c.unit)}</td></tr>`).join('');
+  const col = CATCOLORS[c.cat] || '#2f7d6e';
+  const tr = (arr, maxV) => arr.map((f, i) => `<tr><td class="num">${i + 1}</td><td><a href="/foods/${f.no}">${esc(dispName(f.n))}</a></td><td>${esc(f.g)}</td><td class="num">${fmt(f.v[c.key])} ${esc(c.unit)}</td><td class="gcell">${gbar(f.v[c.key], maxV, col)}</td></tr>`).join('');
+  const topMax = top.length ? top[0].v[c.key] : 0;
+  const lowMax = low.length ? low[low.length - 1].v[c.key] : 0;
   const top3 = top.slice(0, 3).map(f => `${dispName(f.n)}（${fmt(f.v[c.key])}${c.unit}）`).join('、');
   const body = `
 <nav class="crumbs"><a href="/">ホーム</a> › <a href="/nutrients/">栄養素から探す</a> › ${esc(c.label)}</nav>
 <h1>${esc(c.label)}が多い食品ランキング【日本食品標準成分表 八訂】</h1>
 <p class="lead">${esc(c.label)}（単位：${esc(c.unit)}／可食部100gあたり）を多く含む食品のランキングです。全2,538食品のうちデータのある${withV.length}食品から集計しました。最も多いのは${esc(top3)}。</p>
 <h2>${esc(c.label)}が多い食品 トップ50</h2>
-<table class="rank"><thead><tr><th class="num">順位</th><th>食品名</th><th>食品群</th><th class="num">${esc(c.label)}</th></tr></thead><tbody>${tr(top)}</tbody></table>
+<table class="rank"><thead><tr><th class="num">順位</th><th>食品名</th><th>食品群</th><th class="num">${esc(c.label)}</th><th>グラフ</th></tr></thead><tbody>${tr(top, topMax)}</tbody></table>
 <h2>${esc(c.label)}が少ない食品（0を除く）トップ20</h2>
-<table class="rank"><thead><tr><th class="num">順位</th><th>食品名</th><th>食品群</th><th class="num">${esc(c.label)}</th></tr></thead><tbody>${tr(low)}</tbody></table>
+<table class="rank"><thead><tr><th class="num">順位</th><th>食品名</th><th>食品群</th><th class="num">${esc(c.label)}</th><th>グラフ</th></tr></thead><tbody>${tr(low, lowMax)}</tbody></table>
 <a class="toapp" href="/">▶ NutriGraphで全食品・全栄養素をグラフ比較する</a>
 <h2>ほかの栄養素ランキング</h2>
 <p>${COLS.filter(x => x.key !== c.key).map(x => `<a class="pill" href="/nutrients/${slugNut(x.key)}">${esc(x.label)}</a>`).join('')}</p>`;
@@ -158,7 +181,9 @@ for (const c of COLS) {
 for (const g of GROUPS) {
   const url = `/groups/${groupId(g)}`;
   const inG = FOODS.filter(f => f.g === g);
-  const tr = inG.map(f => `<tr><td><a href="/foods/${f.no}">${esc(dispName(f.n))}</a></td>${HEADKEYS.slice(0, 4).map(k => `<td class="num">${fmt(f.v[k])}</td>`).join('')}</tr>`).join('');
+  const gcols = HEADKEYS.slice(0, 4);
+  const gmax = Object.fromEntries(gcols.map(k => [k, Math.max(...inG.map(f => f.v[k] || 0), 0)]));
+  const tr = inG.map(f => `<tr><td><a href="/foods/${f.no}">${esc(dispName(f.n))}</a></td>${gcols.map(k => `<td class="num">${fmt(f.v[k])}${gbar(f.v[k], gmax[k], CATCOLORS[colByKey[k].cat])}</td>`).join('')}</tr>`).join('');
   const body = `
 <nav class="crumbs"><a href="/">ホーム</a> › <a href="/groups/">食品群から探す</a> › ${esc(g)}</nav>
 <h1>${esc(g)}の栄養成分一覧【日本食品標準成分表 八訂】</h1>
@@ -236,14 +261,16 @@ for (const t of THEMES) {
   const url = `/collections/${t.slug}`;
   const ranked = FOODS.filter(t.filter).sort((a, b) => t.score(b) - t.score(a)).slice(0, 50);
   const cols = t.show.map(k => colByKey[k]);
-  const rows = ranked.map((f, i) => `<tr><td class="num">${i + 1}</td><td><a href="/foods/${f.no}">${esc(dispName(f.n))}</a></td><td>${esc(f.g)}</td>${cols.map(c => `<td class="num">${fmt(f.v[c.key])} ${esc(c.unit)}</td>`).join('')}<td class="num">${fmt(t.score(ranked[i]) )}${t.munit ? ' ' + t.munit : ''}</td></tr>`).join('');
+  const hk = cols[0].key, hcol = CATCOLORS[cols[0].cat] || '#2f7d6e';
+  const hmax = Math.max(...ranked.map(f => f.v[hk] || 0), 0);
+  const rows = ranked.map((f, i) => `<tr><td class="num">${i + 1}</td><td><a href="/foods/${f.no}">${esc(dispName(f.n))}</a></td><td>${esc(f.g)}</td>${cols.map(c => `<td class="num">${fmt(f.v[c.key])} ${esc(c.unit)}</td>`).join('')}<td class="num">${fmt(t.score(ranked[i]) )}${t.munit ? ' ' + t.munit : ''}</td><td class="gcell">${gbar(f.v[hk], hmax, hcol)}</td></tr>`).join('');
   const top3 = ranked.slice(0, 3).map(f => dispName(f.n)).join('、');
   const body = `
 <nav class="crumbs"><a href="/">ホーム</a> › <a href="/collections/">特集から探す</a> › ${esc(t.name)}</nav>
 <h1>${esc(t.name)}ランキング【日本食品標準成分表 八訂】</h1>
 <p class="lead">${esc(t.lead)}（可食部100gあたり）。上位は${esc(top3)}など。</p>
 <h2>ランキング トップ50</h2>
-<table class="rank"><thead><tr><th class="num">順位</th><th>食品名</th><th>食品群</th>${cols.map(c => `<th class="num">${esc(c.label)}</th>`).join('')}<th class="num">${esc(t.metric)}</th></tr></thead><tbody>${rows}</tbody></table>
+<table class="rank"><thead><tr><th class="num">順位</th><th>食品名</th><th>食品群</th>${cols.map(c => `<th class="num">${esc(c.label)}</th>`).join('')}<th class="num">${esc(t.metric)}</th><th>${esc(cols[0].label)}</th></tr></thead><tbody>${rows}</tbody></table>
 <a class="toapp" href="/">▶ NutriGraphで自分の条件でグラフ比較する</a>
 <h2>ほかの特集</h2>
 <p>${THEMES.filter(x => x.slug !== t.slug).map(x => `<a class="pill" href="/collections/${x.slug}">${esc(x.name)}</a>`).join('')}</p>`;
@@ -298,7 +325,10 @@ function comparePage(a, b) {
       if (va != null && vb != null) { if (va > vb) winA++; else if (vb > va) winB++; }
       const sa = va != null && vb != null && va > vb ? ' style="font-weight:700;color:var(--accent)"' : '';
       const sb = va != null && vb != null && vb > va ? ' style="font-weight:700;color:var(--accent)"' : '';
-      rows += `<tr><td>${esc(c.label)}<br><span style="color:#9aa;font-size:11px">${esc(c.unit)}</span></td><td class="num"${sa}>${fmt(va)}</td><td class="num"${sb}>${fmt(vb)}</td></tr>`;
+      const m = Math.max(va || 0, vb || 0);
+      const ca = va != null && vb != null && va >= vb ? '#2f7d6e' : '#b9c2c8';
+      const cb = va != null && vb != null && vb >= va ? '#2f7d6e' : '#b9c2c8';
+      rows += `<tr><td>${esc(c.label)}<br><span style="color:#9aa;font-size:11px">${esc(c.unit)}</span></td><td class="num"${sa}>${fmt(va)} ${gbar(va, m, ca)}</td><td class="num"${sb}>${fmt(vb)} ${gbar(vb, m, cb)}</td></tr>`;
     }
   }
   const macroLine = macro.filter(k => a.v[k] != null && b.v[k] != null).map(k => {
@@ -337,6 +367,18 @@ write('compare/index.html', page({
 <a class="toapp" href="/">▶ インタラクティブ版で自由に比較する</a>`,
 }));
 urls.push({ loc: '/compare/', pri: '0.7' });
+
+// ---------- stats.json（ブラウザ側のグラフ描画用：群×栄養素の分布統計） ----------
+const r3 = n => Math.round(n * 1000) / 1000;
+const statsOut = {};
+for (const g of GROUPS) {
+  const id = gid(g); statsOut[id] = {};
+  for (const c of COLS) {
+    const st = groupStat[g][c.key];
+    if (st) statsOut[id][c.key] = [st.min, st.q1, st.med, st.q3, st.max, st.mean].map(r3);
+  }
+}
+fs.writeFileSync(path.join(ROOT, 'stats.json'), JSON.stringify(statsOut));
 
 // ---------- sitemap.xml ----------
 const sm = `<?xml version="1.0" encoding="UTF-8"?>
