@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本食品標準成分表2020(八訂) 栄養素比較ダッシュボード</title>
+<meta name="description" content="日本食品標準成分表2020年版（八訂）の全2,538食品・53栄養素をインタラクティブに比較できるダッシュボード。">
+<link rel="stylesheet" href="./styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+<script type="module" src="./src/main.js"></script>
+</head>
+<body>
+<header>
+  <h1>日本食品標準成分表2020年版（八訂）栄養素比較ダッシュボード</h1>
+  <p>全2,538食品・53栄養素 ／ 出典：文部科学省 食品成分データベース　※すべて可食部100gあたり</p>
+</header>
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="rank">① 栄養素ランキング</div>
+    <div class="tab" data-tab="profile">② 食品プロファイル比較</div>
+    <div class="tab" data-tab="groups">③ 食品群の中で全食品を比較</div>
+    <div class="tab" data-tab="matrix">④ 食品×栄養素マトリクス</div>
+  </div>
+
+  <div id="status">データを読み込んでいます…</div>
+
+  <!-- TAB 1 -->
+  <div id="tab-rank" hidden>
+    <div class="panel">
+      <div class="controls">
+        <div>
+          <label>栄養素を選ぶ</label>
+          <select id="r-nut"></select>
+        </div>
+        <div>
+          <label>食品群でしぼる</label>
+          <select id="r-group"></select>
+        </div>
+        <div>
+          <label>表示件数（上位/下位）</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="r-topn" min="1" value="25" style="flex:1">
+            <label style="display:flex;gap:4px;align-items:center;margin:0;white-space:nowrap;font-weight:600;color:var(--ink)"><input type="checkbox" id="r-all" style="width:auto">全件</label>
+          </div>
+        </div>
+        <div>
+          <label>並び順</label>
+          <div class="seg" id="r-sort">
+            <button class="on" data-v="desc">多い順</button>
+            <button data-v="asc">少ない順</button>
+          </div>
+        </div>
+        <div>
+          <label>食品名で検索</label>
+          <input id="r-search" placeholder="例：さば、納豆…">
+        </div>
+      </div>
+      <div class="legend-note" id="r-note"></div>
+      <div class="chartbox"><canvas id="r-chart"></canvas></div>
+      <div class="meta" id="r-meta"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2 -->
+  <div id="tab-profile" hidden>
+    <div class="panel">
+      <label>比較する食品を選ぶ（複数可・検索して追加）</label>
+      <input id="p-search" placeholder="食品名で検索して下のリストから追加（例：牛乳、白米、ほうれんそう）">
+      <div class="results" id="p-results" style="display:none"></div>
+      <div class="foodpick" id="p-chips"></div>
+      <p class="hint" style="margin-top:14px">比較する栄養素を選ぶ（カテゴリ見出しで一括選択／上のボタンで一括切替）</p>
+      <div id="p-nuts"></div>
+      <div class="legend-note">各栄養素は「選択した食品の中で最大の食品」を100%として正規化し、相対比較しています（単位が異なるため）。実数値はバーにカーソルを合わせると表示されます。</div>
+      <div class="chartbox"><canvas id="p-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TAB 3 -->
+  <div id="tab-groups" hidden>
+    <div class="panel">
+      <div class="controls" style="grid-template-columns:1fr 1fr auto">
+        <div>
+          <label>食品群を選ぶ</label>
+          <select id="gp-group"></select>
+        </div>
+        <div>
+          <label>各グラフの表示件数</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="gp-topn" min="1" value="30" style="flex:1">
+            <label style="display:flex;gap:4px;align-items:center;margin:0;white-space:nowrap;font-weight:600;color:var(--ink)"><input type="checkbox" id="gp-all" style="width:auto">全件</label>
+          </div>
+        </div>
+        <div>
+          <label>並び順</label>
+          <div class="seg" id="gp-sort">
+            <button class="on" data-v="desc">多い順</button>
+            <button data-v="asc">少ない順</button>
+          </div>
+        </div>
+      </div>
+      <p class="hint" style="margin:12px 0 6px">比較する栄養素を選ぶ（カテゴリ見出しで一括選択／上のボタンで一括切替）</p>
+      <div id="gp-nuts"></div>
+      <div class="legend-note">選んだ食品群に含まれる食品を、栄養素ごとに棒グラフで比較します（可食部100gあたり）。「全件」を選ぶとその群の全食品を表示します。グラフは横スクロールで切り替え、目盛りは上下どちらにも表示されます。</div>
+      <div id="gp-charts" class="scrollrow"></div>
+      <div class="scrollhint">← グラフは横方向にスクロールできます →</div>
+    </div>
+  </div>
+
+  <!-- TAB 4 -->
+  <div id="tab-matrix" hidden>
+    <div class="panel">
+      <div class="controls" style="grid-template-columns:1fr 1fr 1fr auto">
+        <div>
+          <label>食品群を選ぶ</label>
+          <select id="mx-group"></select>
+        </div>
+        <div>
+          <label>並べ替えの基準</label>
+          <select id="mx-sortcol"></select>
+        </div>
+        <div>
+          <label>表示件数</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="number" id="mx-topn" min="1" value="30" style="flex:1">
+            <label style="display:flex;gap:4px;align-items:center;margin:0;white-space:nowrap;font-weight:600;color:var(--ink)"><input type="checkbox" id="mx-all" style="width:auto">全件</label>
+          </div>
+        </div>
+        <div>
+          <label>並び順</label>
+          <div class="seg" id="mx-sort">
+            <button class="on" data-v="desc">多い順</button>
+            <button data-v="asc">少ない順</button>
+          </div>
+        </div>
+      </div>
+      <p class="hint" style="margin:12px 0 6px">表示する栄養素を選ぶ（行=食品／列=栄養素のマトリクスになります）</p>
+      <div id="mx-nuts"></div>
+      <div class="legend-note">各セルの<b>棒</b>＝その食品の値。<b>棒の色＝その食品が群の中でどの統計量を超えているか</b>を表します：
+        <span class="tierkey"><i style="background:#c2ccd2"></i>&lt;Q1</span>
+        <span class="tierkey"><i style="background:#8fc0b1"></i>≥Q1</span>
+        <span class="tierkey"><i style="background:#3f9b86"></i>≥中央値</span>
+        <span class="tierkey"><i style="background:#2f7d6e"></i>≥Q3（多い）</span>
+        <span class="tierkey"><i style="background:#d64541"></i>スケール超（突出）</span>。
+        重ねた縦線＝群全体の <b style="color:#3b82c4">┃Q1</b>・<b style="color:#8a5fb0">┃Q3</b>・<b style="color:#5b6670">┊平均</b>、<b style="color:#e0762e">●中央値</b>。色が濃い（緑→赤）ほどその栄養素が豊富で、行を横に見ればどの栄養素で豊富かが一目でわかります。統計量とスケールは<b>極端値を避けるため上位・下位5%を除外</b>して算出（突出食品は赤く右端で振り切れ・数値は実数）。可食部100gあたり。</div>
+      <div class="mxwrap"><table class="mx"><thead id="mx-head"></thead><tbody id="mx-body"></tbody></table></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
