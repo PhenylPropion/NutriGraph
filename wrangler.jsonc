@@ -1,0 +1,10 @@
+{
+  // 静的アセットのみ（Workerスクリプトなし）の構成。
+  // assets.directory はリポジトリ直下だが、.assetsignore で node_modules 等を除外する。
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nutrigraph",
+  "compatibility_date": "2026-06-14",
+  "assets": {
+    "directory": "."
+  }
+}

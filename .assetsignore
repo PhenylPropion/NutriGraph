@@ -1,0 +1,17 @@
+# Cloudflare Workers Assets で配信しないもの（gitignore 形式）
+# これが無いと node_modules ごとアップロードされ「Asset too large」で失敗する
+node_modules
+.git
+.wrangler
+.assetsignore
+.gitignore
+.node-version
+scripts
+*.md
+package.json
+package-lock.json
+wrangler.jsonc
+wrangler.toml
+vercel.json
+*.log
+.DS_Store

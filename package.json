@@ -7,7 +7,11 @@
   "scripts": {
     "dev": "npx --yes serve@latest .",
     "start": "npx --yes serve@latest .",
-    "generate": "node scripts/generate.mjs"
+    "generate": "node scripts/generate.mjs",
+    "build": "node scripts/generate.mjs"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": ["nutrition", "dashboard", "chart.js", "japan", "food-composition", "dataviz"],
   "license": "MIT"
