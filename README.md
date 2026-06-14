@@ -73,6 +73,54 @@ vercel --prod # 本番
 
 または GitHub にプッシュして Vercel ダッシュボードからインポートするだけで公開できます（フレームワークは「Other」、ビルドコマンドなし、出力ディレクトリはルート）。
 
+## SEO（検索最適化）
+
+検索エンジンで見つけてもらいやすいよう、以下を実装済みです。
+
+- キーワードを含む `<title>` / `meta description` / `meta keywords`
+- `canonical` URL、`robots`（index,follow）
+- OGP（Open Graph）と Twitter Card、シェア用の `og-image.png`（1200×630）
+- 構造化データ（JSON-LD）：`WebApplication` / `Dataset` / `WebSite`
+- `robots.txt` と `sitemap.xml`
+- クロール可能な本文（フッターの「NutriGraph について／できること」セクション、見出し階層）
+- 表示高速化：Chart.js の `defer` 読み込み、CDN への `preconnect`
+
+### 公開URLを変えたとき
+
+ドメインを変更する場合は、次のファイル内の `nutri-graph.vercel.app` を新しいドメインに一括置換してください。
+
+- `index.html`（canonical / OGP / Twitter / JSON-LD）
+- `robots.txt`（Sitemap 行）
+- `sitemap.xml`（`<loc>`）
+
+### プログラマティックSEO（自動生成ページ）
+
+検索流入を増やすため、データから大量の静的ページを自動生成しています（`scripts/generate.mjs`）。
+
+```bash
+npm run generate   # data.json から下記ページと sitemap.xml を再生成
+```
+
+生成されるページ（すべて静的HTML・クロール最適化済み）:
+
+- `/foods/<番号>` … **全2,538食品の詳細ページ**（全53栄養素の表＋「豊富な栄養素」分析＋関連食品リンク）
+- `/nutrients/<栄養素>` … **全53栄養素のランキングページ**（例：「たんぱく質が多い食品ランキング」トップ50＋少ない順）
+- `/groups/<番号>` … **18食品群の一覧ページ**
+- `/collections/<テーマ>` … **目的別の特集ページ**（高たんぱく・低カロリー／低糖質／高食物繊維／鉄分・カルシウムが豊富 など、複数栄養素を組み合わせたランキング）
+- `/compare/<番号a>-<番号b>` … **人気食品どうしの1対1比較ページ**（全53項目を並べ、多い方をハイライト）
+- `/nutrients/` `/groups/` `/collections/` `/compare/` … ハブ（一覧）ページ
+
+各ページは独自タイトル・meta description・canonical・OGP・パンくず構造化データ（JSON-LD）を持ち、相互に内部リンクされています。`sitemap.xml` には全ページ（約2,600 URL）が含まれます。データを更新したら `npm run generate` を実行し、生成物をコミットしてください。
+
+### 公開後にやること（重要）
+
+1. **Google Search Console** にサイトを登録（本リポジトリには確認用ファイル `googledfaf74dfcb4221fd.html` を同梱済み）。
+2. Search Console で `https://nutri-graph.vercel.app/sitemap.xml` を送信。
+3. 「URL検査」からトップページのインデックス登録をリクエスト。
+4. 数日〜数週間でインデックスされ、検索結果に表示されるようになります。
+
+> 検索順位はコンテンツの独自性・被リンク・継続的な更新でも変わります。トップ表示を狙うなら、解説記事や使い方ページを追加していくと効果的です。
+
 ## データについて
 
 `data.json` は文部科学省が公開する「日本食品標準成分表2020年版（八訂）」のExcelファイルから、食品名・食品群・各栄養素を抽出・整形したものです。微量「Tr」は0として扱い、未測定「-」「*」は欠損として除外しています。データの著作権・利用条件は文部科学省の規定に従ってください。
