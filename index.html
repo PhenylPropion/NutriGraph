@@ -3,29 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>日本食品標準成分表2020(八訂) 栄養素比較ダッシュボード</title>
-<meta name="description" content="日本食品標準成分表2020年版（八訂）の全2,538食品・53栄養素をインタラクティブに比較できるダッシュボード。">
+
+<!-- 基本SEO（公開URLが異なる場合は nutri-graph.vercel.app を一括置換してください） -->
+<title>NutriGraph｜日本食品標準成分表2020年版(八訂) 栄養素比較ツール【全2,538食品・53栄養素】</title>
+<meta name="description" content="文部科学省「日本食品標準成分表2020年版（八訂）」の全2,538食品・53栄養素（カロリー・たんぱく質・脂質・炭水化物・食物繊維・ビタミン・ミネラル・食塩相当量など）を、ランキング・食品比較・箱ひげ統計でインタラクティブに比較できる無料の可視化ツール NutriGraph。">
+<meta name="keywords" content="日本食品標準成分表,八訂,食品成分表,栄養素 比較,カロリー,たんぱく質,脂質,炭水化物,食物繊維,ビタミン,ミネラル,食塩相当量,栄養成分 グラフ,可食部100g,NutriGraph">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#2f7d6e">
+<link rel="canonical" href="https://nutri-graph.vercel.app/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="NutriGraph">
+<meta property="og:title" content="NutriGraph｜日本食品標準成分表(八訂) 栄養素比較ツール">
+<meta property="og:description" content="全2,538食品・53栄養素をランキング・食品比較・箱ひげ統計でインタラクティブに比較できる無料の可視化ツール。出典：文部科学省 食品成分データベース。">
+<meta property="og:url" content="https://nutri-graph.vercel.app/">
+<meta property="og:image" content="https://nutri-graph.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NutriGraph - 日本食品標準成分表(八訂) 栄養素比較ツール">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NutriGraph｜日本食品標準成分表(八訂) 栄養素比較ツール">
+<meta name="twitter:description" content="全2,538食品・53栄養素をインタラクティブに比較できる無料の可視化ツール。">
+<meta name="twitter:image" content="https://nutri-graph.vercel.app/og-image.png">
+<meta name="twitter:image:alt" content="NutriGraph - 栄養素比較ツール">
+
+<!-- Favicon / PWA -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%232f7d6e'/%3E%3Crect x='22' y='52' width='13' height='26' fill='%23fff'/%3E%3Crect x='43' y='34' width='13' height='44' fill='%23fff'/%3E%3Crect x='64' y='22' width='13' height='56' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="NutriGraph">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<!-- 表示高速化 -->
+<link rel="modulepreload" href="./src/main.js">
+<link rel="preload" as="fetch" href="./data.json" type="application/json" crossorigin>
+
+<!-- 構造化データ（JSON-LD） -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "NutriGraph",
+      "alternateName": "日本食品標準成分表 栄養素比較ダッシュボード",
+      "url": "https://nutri-graph.vercel.app/",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "ja",
+      "description": "日本食品標準成分表2020年版（八訂）の全2,538食品・53栄養素をランキング・食品比較・箱ひげ統計でインタラクティブに比較できる無料の可視化ツール。",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+      "isBasedOn": "https://fooddb.mext.go.jp/"
+    },
+    {
+      "@type": "Dataset",
+      "name": "日本食品標準成分表2020年版（八訂）",
+      "description": "文部科学省が公開する日本食品標準成分表2020年版（八訂）。全2,538食品・53栄養素（可食部100gあたり）。",
+      "creator": { "@type": "GovernmentOrganization", "name": "文部科学省" },
+      "isAccessibleForFree": true,
+      "license": "https://fooddb.mext.go.jp/",
+      "url": "https://nutri-graph.vercel.app/",
+      "keywords": ["食品成分表", "八訂", "栄養素", "カロリー", "ビタミン", "ミネラル"]
+    },
+    {
+      "@type": "WebSite",
+      "name": "NutriGraph",
+      "url": "https://nutri-graph.vercel.app/",
+      "inLanguage": "ja"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://nutri-graph.vercel.app/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "NutriGraphとは何ですか？",
+          "acceptedAnswer": { "@type": "Answer", "text": "文部科学省の日本食品標準成分表2020年版（八訂）をもとに、全2,538食品・53栄養素を無料で比較・可視化できるWebツールです。インストール不要でブラウザから利用できます。" }
+        },
+        {
+          "@type": "Question",
+          "name": "八訂（2020年版）とは何ですか？",
+          "acceptedAnswer": { "@type": "Answer", "text": "日本食品標準成分表の第8次改訂版（2020年版）です。エネルギー計算方法の見直しなどが行われ、最新の食品成分データが収載されています。" }
+        },
+        {
+          "@type": "Question",
+          "name": "どんな栄養素を比較できますか？",
+          "acceptedAnswer": { "@type": "Answer", "text": "エネルギー（カロリー）・たんぱく質・脂質・炭水化物・食物繊維・食塩相当量などの基本成分に加え、カルシウム・鉄・カリウムなどのミネラル、ビタミンA・B群・C・D・E・Kまで全53項目を可食部100gあたりで比較できます。" }
+        },
+        {
+          "@type": "Question",
+          "name": "データの出典は？利用は無料ですか？",
+          "acceptedAnswer": { "@type": "Answer", "text": "出典は文部科学省 食品成分データベース（日本食品標準成分表2020年版〔八訂〕）です。NutriGraphの利用は無料です。" }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="stylesheet" href="./styles.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 <script type="module" src="./src/main.js"></script>
 </head>
 <body>
 <header>
-  <h1>日本食品標準成分表2020年版（八訂）栄養素比較ダッシュボード</h1>
+  <h1>NutriGraph｜日本食品標準成分表2020年版（八訂）栄養素比較ツール</h1>
   <p>全2,538食品・53栄養素 ／ 出典：文部科学省 食品成分データベース　※すべて可食部100gあたり</p>
 </header>
 <div class="wrap">
-  <div class="tabs">
-    <div class="tab active" data-tab="rank">① 栄養素ランキング</div>
-    <div class="tab" data-tab="profile">② 食品プロファイル比較</div>
-    <div class="tab" data-tab="groups">③ 食品群の中で全食品を比較</div>
-    <div class="tab" data-tab="matrix">④ 食品×栄養素マトリクス</div>
-  </div>
+  <nav class="tabs" role="tablist" aria-label="比較モードの切り替え">
+    <button class="tab active" data-tab="rank" role="tab" aria-selected="true" aria-controls="tab-rank">① 栄養素ランキング</button>
+    <button class="tab" data-tab="profile" role="tab" aria-selected="false" aria-controls="tab-profile">② 食品プロファイル比較</button>
+    <button class="tab" data-tab="groups" role="tab" aria-selected="false" aria-controls="tab-groups">③ 食品群の中で全食品を比較</button>
+    <button class="tab" data-tab="matrix" role="tab" aria-selected="false" aria-controls="tab-matrix">④ 食品×栄養素マトリクス</button>
+  </nav>
 
+  <main id="content">
   <div id="status">データを読み込んでいます…</div>
 
   <!-- TAB 1 -->
-  <div id="tab-rank" hidden>
+  <div id="tab-rank" role="tabpanel" aria-label="栄養素ランキング" hidden>
+    <h2 class="sr-only">栄養素ランキング：カロリーやたんぱく質など栄養素別に食品を多い順・少ない順で比較</h2>
     <div class="panel">
       <div class="controls">
         <div>
@@ -62,7 +170,8 @@
   </div>
 
   <!-- TAB 2 -->
-  <div id="tab-profile" hidden>
+  <div id="tab-profile" role="tabpanel" aria-label="食品プロファイル比較" hidden>
+    <h2 class="sr-only">食品プロファイル比較：複数の食品の栄養バランスを並べて比較</h2>
     <div class="panel">
       <label>比較する食品を選ぶ（複数可・検索して追加）</label>
       <input id="p-search" placeholder="食品名で検索して下のリストから追加（例：牛乳、白米、ほうれんそう）">
@@ -76,7 +185,8 @@
   </div>
 
   <!-- TAB 3 -->
-  <div id="tab-groups" hidden>
+  <div id="tab-groups" role="tabpanel" aria-label="食品群の中で全食品を比較" hidden>
+    <h2 class="sr-only">食品群内の全食品比較：野菜類・魚介類などの群ごとに栄養素を比較</h2>
     <div class="panel">
       <div class="controls" style="grid-template-columns:1fr 1fr auto">
         <div>
@@ -107,7 +217,8 @@
   </div>
 
   <!-- TAB 4 -->
-  <div id="tab-matrix" hidden>
+  <div id="tab-matrix" role="tabpanel" aria-label="食品×栄養素マトリクス" hidden>
+    <h2 class="sr-only">食品×栄養素マトリクス：各食品がどの栄養素で豊富かを統計付きで一覧表示</h2>
     <div class="panel">
       <div class="controls" style="grid-template-columns:1fr 1fr 1fr auto">
         <div>
@@ -145,6 +256,58 @@
       <div class="mxwrap"><table class="mx"><thead id="mx-head"></thead><tbody id="mx-body"></tbody></table></div>
     </div>
   </div>
+  </main>
+
+  <footer class="site-about">
+    <h2>NutriGraph について</h2>
+    <p>NutriGraph は、文部科学省が公開する<strong>日本食品標準成分表2020年版（八訂）</strong>のデータをもとに、<strong>全2,538食品・53栄養素</strong>をブラウザ上で自由に比較・可視化できる無料のツールです。エネルギー（カロリー）・たんぱく質・脂質・炭水化物・食物繊維・食塩相当量などの基本成分から、カルシウム・鉄・カリウムといったミネラル、ビタミンA・B群・C・D・E・Kまで、すべて可食部100gあたりの値で確認できます。</p>
+    <h2>できること</h2>
+    <ul>
+      <li><strong>栄養素ランキング</strong>：特定の栄養素が多い／少ない食品を一覧で比較。</li>
+      <li><strong>食品プロファイル比較</strong>：複数の食品を選び、栄養バランスを相対比較。</li>
+      <li><strong>食品群内の全食品比較</strong>：野菜類・魚介類などの群ごとに全食品を栄養素別に比較。</li>
+      <li><strong>食品×栄養素マトリクス</strong>：各食品がどの栄養素で豊富かを、群全体の統計（四分位・中央値・平均）と合わせて色分け表示。</li>
+    </ul>
+    <h2>栄養素から探す（人気ランキング）</h2>
+    <p>
+      <a class="pill" href="/nutrients/enerc_kcal">エネルギーが多い食品</a>
+      <a class="pill" href="/nutrients/prot">たんぱく質が多い食品</a>
+      <a class="pill" href="/nutrients/fib">食物繊維が多い食品</a>
+      <a class="pill" href="/nutrients/ca">カルシウムが多い食品</a>
+      <a class="pill" href="/nutrients/fe">鉄が多い食品</a>
+      <a class="pill" href="/nutrients/vitc">ビタミンCが多い食品</a>
+      <a class="pill" href="/nutrients/k">カリウムが多い食品</a>
+      <a class="pill" href="/nutrients/nacl_eq">食塩相当量が多い食品</a>
+      <a class="pill" href="/nutrients/">▶ 全53栄養素の一覧</a>
+    </p>
+    <h2>食品群から探す</h2>
+    <p>
+      <a class="pill" href="/groups/01">穀類</a><a class="pill" href="/groups/04">豆類</a><a class="pill" href="/groups/06">野菜類</a><a class="pill" href="/groups/07">果実類</a><a class="pill" href="/groups/10">魚介類</a><a class="pill" href="/groups/11">肉類</a><a class="pill" href="/groups/13">乳類</a><a class="pill" href="/groups/">▶ 全18食品群の一覧</a>
+    </p>
+    <h2>目的から探す・食品を比較する</h2>
+    <p>
+      <a class="pill" href="/collections/high-protein-low-calorie">高たんぱく・低カロリー</a>
+      <a class="pill" href="/collections/low-calorie">低カロリー</a>
+      <a class="pill" href="/collections/low-carb">低糖質</a>
+      <a class="pill" href="/collections/high-fiber-low-calorie">高食物繊維</a>
+      <a class="pill" href="/collections/iron-rich-low-calorie">鉄分が豊富</a>
+      <a class="pill" href="/collections/">▶ 目的別の特集一覧</a>
+      <a class="pill" href="/compare/">▶ 食品を1対1で比較</a>
+    </p>
+
+    <h2>よくある質問</h2>
+    <dl class="faq">
+      <dt>NutriGraphとは何ですか？</dt>
+      <dd>文部科学省の日本食品標準成分表2020年版（八訂）をもとに、全2,538食品・53栄養素を無料で比較・可視化できるWebツールです。インストール不要でブラウザから利用できます。</dd>
+      <dt>八訂（2020年版）とは何ですか？</dt>
+      <dd>日本食品標準成分表の第8次改訂版（2020年版）です。エネルギー計算方法の見直しなどが行われ、最新の食品成分データが収載されています。</dd>
+      <dt>どんな栄養素を比較できますか？</dt>
+      <dd>エネルギー（カロリー）・たんぱく質・脂質・炭水化物・食物繊維・食塩相当量などの基本成分に加え、カルシウム・鉄・カリウムなどのミネラル、ビタミンA・B群・C・D・E・Kまで全53項目を可食部100gあたりで比較できます。</dd>
+      <dt>データの出典は？利用は無料ですか？</dt>
+      <dd>出典は文部科学省 食品成分データベース（日本食品標準成分表2020年版〔八訂〕）です。NutriGraphの利用は無料です。</dd>
+    </dl>
+    <p class="src">出典：<a href="https://fooddb.mext.go.jp/" rel="noopener" target="_blank">文部科学省 食品成分データベース</a>（日本食品標準成分表2020年版〔八訂〕）。数値の権利は出典元に帰属します。NutriGraph はオープンソース（<a href="https://github.com/PhenylPropion/NutriGraph" rel="noopener" target="_blank">GitHub</a>）。</p>
+  </footer>
 </div>
 </body>
 </html>

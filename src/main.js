@@ -8,10 +8,20 @@ import { initMatrix } from './tabs/matrix.js';
 const TABS = { rank: 'tab-rank', profile: 'tab-profile', groups: 'tab-groups', matrix: 'tab-matrix' };
 
 function setupTabs() {
-  document.querySelectorAll('.tab[data-tab]').forEach(t => t.onclick = () => {
-    document.querySelectorAll('.tab[data-tab]').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
+  const tabs = [...document.querySelectorAll('.tab[data-tab]')];
+  const activate = t => {
+    tabs.forEach(x => { const on = x === t; x.classList.toggle('active', on); x.setAttribute('aria-selected', on ? 'true' : 'false'); });
     Object.entries(TABS).forEach(([k, id]) => { document.getElementById(id).hidden = t.dataset.tab !== k; });
+  };
+  tabs.forEach((t, i) => {
+    t.onclick = () => activate(t);
+    // 左右矢印キーでタブ移動（アクセシビリティ）
+    t.onkeydown = e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const n = (i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+      tabs[n].focus(); activate(tabs[n]);
+    };
   });
 }
 

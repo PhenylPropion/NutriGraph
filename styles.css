@@ -12,8 +12,11 @@ header p{margin:4px 0 0;font-size:12.5px;opacity:.9}
 .wrap{max-width:1180px;margin:0 auto;padding:18px}
 .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .tab{padding:9px 16px;border:1px solid var(--line);background:var(--panel);border-radius:10px;
-  cursor:pointer;font-weight:600;color:var(--muted)}
+  cursor:pointer;font-weight:600;color:var(--muted);font-family:inherit;font-size:14px;line-height:1.2}
 .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* visually hidden (screen readers / SEO 構造) */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;
   box-shadow:var(--shadow);margin-bottom:18px}
 .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;align-items:end}
@@ -79,3 +82,34 @@ table.mx tbody tr:hover td.fcol{background:#eef5f3}
 .catitems label span{color:#9aa;font-size:11px}
 /* loading / error */
 #status{padding:40px;text-align:center;color:var(--muted)}
+/* about / footer (SEO crawlable content) */
+.site-about{max-width:1180px;margin:8px auto 40px;padding:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.8}
+.site-about h2{font-size:15px;color:var(--ink);margin:18px 0 6px}
+.site-about ul{margin:6px 0;padding-left:1.2em}
+.site-about a{color:var(--accent)}
+.site-about .src{font-size:12px;margin-top:16px}
+.faq dt{font-weight:600;color:var(--ink);margin-top:12px}
+.faq dd{margin:4px 0 0;padding-left:0}
+/* 生成された解説ページ（食品・栄養素・食品群） */
+.article{max-width:920px;margin:0 auto;padding:22px 18px 60px}
+.crumbs{font-size:12px;color:var(--muted);margin-bottom:14px}
+.crumbs a{color:var(--accent);text-decoration:none}
+.article h1{font-size:22px;line-height:1.4;margin:6px 0 10px}
+.article h2{font-size:16px;margin:26px 0 8px;border-left:4px solid var(--accent);padding-left:8px}
+.article p{margin:8px 0}
+.lead{color:var(--ink)}
+.pill{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:16px;padding:3px 11px;margin:3px 4px 3px 0;font-size:13px;color:var(--accent);text-decoration:none}
+.pill:hover{background:var(--accent);color:#fff}
+table.data,table.rank{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+table.data th,table.data td,table.rank th,table.rank td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+table.data td.num,table.rank td.num,table.rank th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.data thead th,table.rank thead th{background:#f0f5f4;font-size:12px}
+table.rank td a{color:var(--accent);text-decoration:none}
+table.rank td a:hover{text-decoration:underline}
+.catrow th{background:#eef3f2;color:var(--accent);font-weight:700}
+.linklist{columns:2;font-size:13px;margin:8px 0}
+.linklist a{color:var(--accent);text-decoration:none;display:block;padding:2px 0}
+@media(max-width:640px){.linklist{columns:1}}
+.toapp{display:inline-block;margin:14px 0;background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;text-decoration:none;font-weight:600}
+.pagefoot{margin-top:30px;border-top:1px solid var(--line);padding-top:14px;font-size:12px;color:var(--muted)}
+.pagefoot a{color:var(--accent)}
