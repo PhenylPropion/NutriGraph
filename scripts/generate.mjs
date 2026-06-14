@@ -91,7 +91,7 @@ ${ld.length ? `<script type="application/ld+json">${JSON.stringify({ '@context':
 <article class="article">
 ${body}
 <div class="pagefoot">
-  出典：<a href="https://fooddb.mext.go.jp/" rel="noopener" target="_blank">文部科学省 食品成分データベース</a>（日本食品標準成分表2020年版〔八訂〕）。数値は可食部100gあたり。
+  出典：<a href="https://fooddb.mext.go.jp/" rel="noopener" target="_blank">文部科学省 食品成分データベース</a>（日本食品標準成分表2023年版〔八訂〕）。数値は可食部100gあたり。
   ｜<a href="/">インタラクティブ版 NutriGraph</a>
 </div>
 </article>
@@ -129,7 +129,7 @@ for (const f of FOODS) {
   const body = `
 <nav class="crumbs"><a href="/">ホーム</a> › <a href="/groups/${groupId(f.g)}">${esc(f.g)}</a> › ${esc(name)}</nav>
 <h1>${esc(name)}の栄養成分（可食部100gあたり）</h1>
-<p class="lead">${esc(name)}（食品群：${esc(f.g)}／食品番号 ${f.no}）の栄養成分です。${head ? esc(head) + '。' : ''}日本食品標準成分表2020年版（八訂）にもとづく全53項目の数値を掲載しています。</p>
+<p class="lead">${esc(name)}（食品群：${esc(f.g)}／食品番号 ${f.no}）の栄養成分です。${head ? esc(head) + '。' : ''}日本食品標準成分表2023年版（八訂）にもとづく全53項目の数値を掲載しています。</p>
 ${rich.length ? `<h2>${esc(name)}に豊富な栄養素</h2><p>同じ「${esc(f.g)}」の中で比較すると、次の栄養素が上位（第3四分位以上）です。クリックでランキングを表示します。</p><p>${richPills}</p>` : ''}
 <h2>栄養成分表（全53項目）</h2>
 ${BOXLEGEND}
@@ -137,7 +137,7 @@ ${BOXLEGEND}
 <a class="toapp" href="/">▶ ほかの食品とグラフで比較する（NutriGraph）</a>
 <h2>同じ食品群（${esc(f.g)}）の食品</h2>
 <p>${siblings} … <a href="/groups/${groupId(f.g)}">${esc(f.g)}の一覧をすべて見る</a></p>`;
-  const desc = `${name}の栄養成分（可食部100gあたり）。${head}。日本食品標準成分表2020年版(八訂)にもとづく全53栄養素の含有量一覧。`;
+  const desc = `${name}の栄養成分（可食部100gあたり）。${head}。日本食品標準成分表2023年版(八訂)にもとづく全53栄養素の含有量一覧。`;
   write(`foods/${f.no}.html`, page({
     title: `${name}の栄養成分・カロリー｜日本食品標準成分表(八訂)`,
     desc, canonical: url, body,
@@ -168,7 +168,7 @@ for (const c of COLS) {
 <a class="toapp" href="/">▶ NutriGraphで全食品・全栄養素をグラフ比較する</a>
 <h2>ほかの栄養素ランキング</h2>
 <p>${COLS.filter(x => x.key !== c.key).map(x => `<a class="pill" href="/nutrients/${slugNut(x.key)}">${esc(x.label)}</a>`).join('')}</p>`;
-  const desc = `${c.label}が多い食品ランキング（可食部100gあたり）。1位は${top3 || '—'}。日本食品標準成分表2020年版(八訂)の全食品データから集計。`;
+  const desc = `${c.label}が多い食品ランキング（可食部100gあたり）。1位は${top3 || '—'}。日本食品標準成分表2023年版(八訂)の全食品データから集計。`;
   write(`nutrients/${slugNut(c.key)}.html`, page({
     title: `${c.label}が多い食品ランキング｜日本食品標準成分表(八訂)`,
     desc, canonical: url, body,
@@ -193,7 +193,7 @@ for (const g of GROUPS) {
 <a class="toapp" href="/">▶ ${esc(g)}をグラフで比較する（NutriGraph）</a>
 <h2>ほかの食品群</h2>
 <p>${GROUPS.filter(x => x !== g).map(x => `<a class="pill" href="/groups/${groupId(x)}">${esc(x)}</a>`).join('')}</p>`;
-  const desc = `${g}の栄養成分一覧（全${inG.length}食品）。カロリー・たんぱく質・脂質・炭水化物などを可食部100gあたりで比較。日本食品標準成分表2020年版(八訂)。`;
+  const desc = `${g}の栄養成分一覧（全${inG.length}食品）。カロリー・たんぱく質・脂質・炭水化物などを可食部100gあたりで比較。日本食品標準成分表2023年版(八訂)。`;
   write(`groups/${groupId(g)}.html`, page({
     title: `${g}の栄養成分一覧｜日本食品標準成分表(八訂)`,
     desc, canonical: url, body,
@@ -205,7 +205,7 @@ for (const g of GROUPS) {
 // ---------- ハブページ ----------
 write('nutrients/index.html', page({
   title: '栄養素から食品を探す｜全53栄養素ランキング｜NutriGraph',
-  desc: 'カロリー・たんぱく質・脂質・炭水化物・ビタミン・ミネラルなど全53栄養素について、多く含む食品ランキングを一覧。日本食品標準成分表2020年版(八訂)。',
+  desc: 'カロリー・たんぱく質・脂質・炭水化物・ビタミン・ミネラルなど全53栄養素について、多く含む食品ランキングを一覧。日本食品標準成分表2023年版(八訂)。',
   canonical: '/nutrients/',
   breadcrumb: [{ name: 'ホーム', url: '/' }, { name: '栄養素から探す', url: '/nutrients/' }],
   body: `<nav class="crumbs"><a href="/">ホーム</a> › 栄養素から探す</nav>
@@ -218,7 +218,7 @@ urls.push({ loc: '/nutrients/', pri: '0.8' });
 
 write('groups/index.html', page({
   title: '食品群から探す｜18分類の栄養成分一覧｜NutriGraph',
-  desc: '穀類・野菜類・魚介類・肉類など18の食品群ごとに、収載食品と栄養成分の一覧を掲載。日本食品標準成分表2020年版(八訂)。',
+  desc: '穀類・野菜類・魚介類・肉類など18の食品群ごとに、収載食品と栄養成分の一覧を掲載。日本食品標準成分表2023年版(八訂)。',
   canonical: '/groups/',
   breadcrumb: [{ name: 'ホーム', url: '/' }, { name: '食品群から探す', url: '/groups/' }],
   body: `<nav class="crumbs"><a href="/">ホーム</a> › 食品群から探す</nav>
@@ -276,7 +276,7 @@ for (const t of THEMES) {
 <p>${THEMES.filter(x => x.slug !== t.slug).map(x => `<a class="pill" href="/collections/${x.slug}">${esc(x.name)}</a>`).join('')}</p>`;
   write(`collections/${t.slug}.html`, page({
     title: `${t.name}ランキング｜日本食品標準成分表(八訂)`,
-    desc: `${t.name}ランキング（可食部100gあたり）。上位は${top3}など。日本食品標準成分表2020年版(八訂)のデータから集計。`,
+    desc: `${t.name}ランキング（可食部100gあたり）。上位は${top3}など。日本食品標準成分表2023年版(八訂)のデータから集計。`,
     canonical: url, body,
     breadcrumb: [{ name: 'ホーム', url: '/' }, { name: '特集から探す', url: '/collections/' }, { name: t.name, url }],
   }));
@@ -284,7 +284,7 @@ for (const t of THEMES) {
 }
 write('collections/index.html', page({
   title: '目的から探す｜高たんぱく・低カロリーなど食品特集｜NutriGraph',
-  desc: '高たんぱく・低カロリー、低糖質、高食物繊維、鉄分・カルシウムが豊富な食品など、目的別の食品ランキング特集。日本食品標準成分表2020年版(八訂)。',
+  desc: '高たんぱく・低カロリー、低糖質、高食物繊維、鉄分・カルシウムが豊富な食品など、目的別の食品ランキング特集。日本食品標準成分表2023年版(八訂)。',
   canonical: '/collections/',
   breadcrumb: [{ name: 'ホーム', url: '/' }, { name: '特集から探す', url: '/collections/' }],
   body: `<nav class="crumbs"><a href="/">ホーム</a> › 特集から探す</nav>
@@ -346,7 +346,7 @@ function comparePage(a, b) {
 <p><a class="pill" href="/foods/${a.no}">${esc(na)}の詳細</a><a class="pill" href="/foods/${b.no}">${esc(nb)}の詳細</a>${picks.filter(x => x.no !== a.no && x.no !== b.no).slice(0, 8).map(x => { const lo = a.no < x.no ? a : x, hi = a.no < x.no ? x : a; return `<a class="pill" href="/compare/${lo.no}-${hi.no}">${esc(na)} vs ${esc(dispName(x.n))}</a>`; }).join('')}</p>`;
   write(`compare/${a.no}-${b.no}.html`, page({
     title: `${na}と${nb}の栄養を比較｜カロリー・たんぱく質ほか｜NutriGraph`,
-    desc: `${na}と${nb}の栄養成分を可食部100gあたりで比較。${macroLine}。日本食品標準成分表2020年版(八訂)。`,
+    desc: `${na}と${nb}の栄養成分を可食部100gあたりで比較。${macroLine}。日本食品標準成分表2023年版(八訂)。`,
     canonical: url, body,
     breadcrumb: [{ name: 'ホーム', url: '/' }, { name: '食品の比較', url: '/compare/' }, { name: `${na} と ${nb}`, url }],
   }));
