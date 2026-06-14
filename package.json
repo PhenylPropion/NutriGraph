@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "npx --yes serve@latest .",
-    "start": "npx --yes serve@latest ."
+    "start": "npx --yes serve@latest .",
+    "generate": "node scripts/generate.mjs"
   },
   "keywords": ["nutrition", "dashboard", "chart.js", "japan", "food-composition", "dataviz"],
   "license": "MIT"
